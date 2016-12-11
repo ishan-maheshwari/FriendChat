@@ -1,6 +1,7 @@
 package com.example.ishan.friendchat;
 
 import android.content.Intent;
+import android.icu.text.DateFormat;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,9 +65,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private FirebaseListAdapter<ChatMessage> adapter;
     
     private void displayChatMessages(){
-        
+        ListView listOfMessages = (ListView)findViewById(R.id.list_of_messages);
+
+        adapter= new FirebaseListAdapter<ChatMessage>(this,ChatMessage.class,
+                R.layout.message,FirebaseDatabase.getInstance().getReference()) {
+            @Override
+            protected void populateView(View v, ChatMessage model, int position) {
+                TextView messageText = (TextView)v.findViewById(R.id.message_text);
+                TextView messageUser = (TextView)v.findViewById(R.id.message_user);
+                TextView messageTime = (TextView)v.findViewById(R.id.message_time);
+
+                messageText.setText(model.getMessageText());
+                messageUser.setText(model.getMessageUser());
+
+                android.text.format.DateFormat df = new android.text.format.DateFormat();
+                messageTime.setText(df.format("dd-MM-yyyy HH:mm:ss",model.getMessageTime()));
+            }
+        };
+
+        listOfMessages.setAdapter(adapter);
     }
 
     @Override
@@ -112,5 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
 }
 
