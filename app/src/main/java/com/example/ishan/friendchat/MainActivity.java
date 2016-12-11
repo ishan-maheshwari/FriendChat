@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             Toast.makeText(this,
-                    "Welcome" + FirebaseAuth.getInstance()
+                    "Welcome " + FirebaseAuth.getInstance()
                         .getCurrentUser()
                         .getDisplayName(),
                     Toast.LENGTH_LONG)
